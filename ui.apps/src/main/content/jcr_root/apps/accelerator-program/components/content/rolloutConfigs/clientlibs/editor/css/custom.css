@@ -1,0 +1,22 @@
+.form-check-label{
+    margin-bottom: 15px;
+    margin-right: 10px;
+}
+
+.form-check {
+    position: relative;
+    display: block;
+    padding-left: 0rem;
+}
+
+input[type="checkbox"] {
+    margin: 7px 0 0;
+    margin-top: 1px \9;
+    line-height: normal;
+}
+
+.form-check-label {
+    margin-bottom: 15px;
+    margin-right: 10px;
+    margin-left: 20px;
+}
