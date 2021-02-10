@@ -20,9 +20,8 @@ import com.adobe.granite.workflow.metadata.MetaDataMap;
 import com.day.cq.wcm.msm.api.LiveRelationshipManager;
 import com.day.cq.wcm.msm.api.RolloutManager;
 
-@Component(service = WorkflowProcess.class, property = {
-		Constants.SERVICE_DESCRIPTION + "Create live copies",
-		Constants.SERVICE_VENDOR + "Adobe", "process.label" + "Create live copies" })
+@Component(service = WorkflowProcess.class, property = { Constants.SERVICE_DESCRIPTION + "=Create live copies",
+		Constants.SERVICE_VENDOR + "=Adobe", "process.label=Create live copies" })
 public class CreateLiveCopyWorkflow implements WorkflowProcess {
 
 	/** The Constant LOGGER. */

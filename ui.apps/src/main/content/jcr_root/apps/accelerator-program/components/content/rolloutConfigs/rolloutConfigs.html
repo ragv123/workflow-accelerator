@@ -1,0 +1,49 @@
+<sly data-sly-use.clientLib="/libs/granite/sightly/templates/clientlib.html" data-sly-call="${clientLib.all @ categories='multiselectplugin'}"/>
+
+<div>
+
+     <script type="text/javascript">
+          $(document).ready(function() {
+          $('#demo').multiselect({
+              enableHTML: true
+          });
+      });
+    </script>
+
+    	<select id="demo" multiple="multiple">
+
+          <option value="Javascript">Javascript</option>
+        
+          <option value="Python">Python</option>
+        
+          <option value="LISP">LISP</option>
+        
+          <option value="C++">C++</option>
+        
+          <option value="jQuery">jQuery</option>
+        
+          <option value="Ruby">Ruby</option>
+        
+        </select>
+
+	<sly data-sly-use.model="com.adobe.aem.accelerator.program.core.models.RollOutConfigModel">
+		<sly data-sly-test.pageMap="${model.modifiedOrCreatedPages}"/>
+	</sly>
+	
+	<form action="/bin/accelerator/page/finder.json" method="get">
+	  <label for="createdPage">Choose created pages:</label>
+	  <select id="createdPage" name="createdPage" multiple="multiple">
+	    <option data-sly-repeat="${pageMap['createdPage']}" value="${item.path}">${item.title}</option>
+	  </select>
+	  <label for="modifiedPage">Choose modified pages:</label>
+	  <select id="modifiedPage" name="modifiedPage" multiple="multiple">
+	    <option data-sly-repeat="${pageMap['modifiedPage']}" value="${item.path}">${item.title}</option>
+	  </select>
+	  <label for="countries">Choose countries:</label>
+	  <select id="countries" name="countries" multiple="multiple">
+	    <option data-sly-repeat="${model.countriesSet}" value="${item.path}">${item.title}</option>
+	  </select>
+	  <input type="submit" value="Rollout">
+	</form>
+
+</div>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:description="Fetch the list of modified or newly created page under the rollout root path."
+    jcr:primaryType="cq:Component"
+    jcr:title="Rollout Configs"
+    componentGroup="General"/>
