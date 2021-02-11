@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,11 +73,14 @@ public class RolloutPageFinder extends SlingSafeMethodsServlet {
 		List<String> countriesList = new ArrayList<>();
 		List<String> pagePaths = new ArrayList<>();
 		Map<String, List<String>> pageinfoMap = new HashMap<String, List<String>>();
-
 		String[] createdPage = request.getParameterValues("createdPage");
-		createdPageList.addAll(Arrays.asList(createdPage));
+		if (Objects.nonNull(createdPage)) {
+			createdPageList.addAll(Arrays.asList(createdPage));
+		}
 		String[] modifiedPage = request.getParameterValues("modifiedPage");
-		modifiedPageList.addAll(Arrays.asList(modifiedPage));
+		if (Objects.nonNull(modifiedPage)) {
+			modifiedPageList.addAll(Arrays.asList(modifiedPage));
+		}
 		String[] countries = request.getParameterValues("countries");
 		boolean isDeep = Boolean.parseBoolean(request.getParameter("isDeep"));
 		countriesList.addAll(Arrays.asList(countries));

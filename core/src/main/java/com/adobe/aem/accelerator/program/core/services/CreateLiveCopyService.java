@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.sling.api.resource.ResourceResolver;
 
+import com.adobe.aem.accelerator.program.core.beans.RolloutCountryBean;
 import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.msm.api.LiveRelationshipManager;
 import com.day.cq.wcm.msm.api.RolloutManager;
@@ -26,5 +27,20 @@ public interface CreateLiveCopyService {
 	 */
 	public void createLiveCopy(ResourceResolver resourceResolver, List<String> pagePaths, List<String> countriesList,
 			RolloutManager rolloutManager, LiveRelationshipManager liveRelManager, boolean isDeep) throws WCMException;
+
+	/**
+	 * Rollout countries.
+	 *
+	 * @param resourceResolver   the resource resolver
+	 * @param rolloutCountryBean the rollout country bean
+	 * @param rolloutManager     the rollout manager
+	 * @param liveRelManager     the live rel manager
+	 * @param siteRootPath       the site root path
+	 * @param templatePath       the template path
+	 * @throws WCMException the WCM exception
+	 */
+	public void rolloutCountries(ResourceResolver resourceResolver, List<RolloutCountryBean> rolloutCountryBean,
+			RolloutManager rolloutManager, LiveRelationshipManager liveRelManager, String siteRootPath,
+			String templatePath) throws WCMException;
 
 }

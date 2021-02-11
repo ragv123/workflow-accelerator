@@ -23,6 +23,7 @@ import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.adobe.aem.accelerator.program.core.beans.RolloutCountryBean;
 import com.adobe.aem.accelerator.program.core.services.CreateLiveCopyService;
 import com.adobe.aem.accelerator.program.core.services.config.CreateLiveCopyServiceConfig;
 import com.day.cq.contentsync.handler.util.RequestResponseFactory;
@@ -48,17 +49,23 @@ public class CreateLiveCopyServiceImpl implements CreateLiveCopyService {
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(CreateLiveCopyServiceImpl.class);
+
 	/** The Constant CMD_LIVE_COPY. */
 	private static final String CMD_LIVE_COPY = "createLiveCopy";
+
 	/** The Constant CMD. */
 	private static final String CMD = "cmd";
+
 	/** The Constant WCM_COMMAND_ENDPOINT. */
 	private static final String WCM_COMMAND_ENDPOINT = "/bin/wcmcommand";
+
 	/** The Constant CHARSET. */
 	private static final String CHARSET = "_charset_";
+
 	/** The request response factory. */
 	@Reference
 	private RequestResponseFactory requestResponseFactory;
+
 	/** The request processor. */
 	@Reference
 	private SlingRequestProcessor requestProcessor;
@@ -84,6 +91,34 @@ public class CreateLiveCopyServiceImpl implements CreateLiveCopyService {
 		pageManager = resolver.adaptTo(PageManager.class);
 
 		rolloutLiveCopies(rolloutManager, pagePaths, countries, isDeep);
+
+	}
+
+	/**
+	 * Rollout countries.
+	 *
+	 * @param resourceResolver   the resource resolver
+	 * @param rolloutCountryBean the rollout country bean
+	 * @param rolloutManager     the rollout manager
+	 * @param liveRelManager     the live rel manager
+	 * @param siteRootPath       the site root path
+	 * @param templatePath       the template path
+	 * @throws WCMException the WCM exception
+	 */
+	@Override
+	public void rolloutCountries(ResourceResolver resourceResolver, List<RolloutCountryBean> rolloutCountryBean,
+			RolloutManager rolloutManager, LiveRelationshipManager liveRelManager, String siteRootPath,
+			String templatePath) throws WCMException {
+		LOGGER.debug("inside rolloutCountries");
+		pageManager = resourceResolver.adaptTo(PageManager.class);
+		for (RolloutCountryBean bean : rolloutCountryBean) {
+			String siteName = bean.getName();
+			String blueprintPath = bean.getLanguage();
+			pageManager.create(siteRootPath, siteName, siteRootPath, bean.getTitle(), true);
+			createLiveCopy(resourceResolver, blueprintPath, siteRootPath + "/" + siteName, bean.getRolloutConfigs());
+			final Page blueprintPage = pageManager.getPage(blueprintPath);
+			rollout(rolloutManager, true, blueprintPage, null);
+		}
 
 	}
 
