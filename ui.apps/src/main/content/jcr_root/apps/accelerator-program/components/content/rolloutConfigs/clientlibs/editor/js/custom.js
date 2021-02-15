@@ -83,7 +83,7 @@ $(document).ready(function() {
 
         $.ajax({
               type: 'POST',
-              url: "/someaction",
+              url: "/bin/accelerator/page/finder",
               data: JSON.stringify(data),
               dataType: "json",
               success: function(resultData) { alert("Save Complete") }
