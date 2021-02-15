@@ -1,16 +1,16 @@
 package com.adobe.aem.accelerator.program.core.beans;
 
-public class CountryBean {
+public class TitlePathBean {
 
 	private String path;
 	private String title;
 
-	public CountryBean(String path, String title) {
+	public TitlePathBean(String path, String title) {
 		this.path = path;
 		this.title = title;
 	}
 
-	public CountryBean() {
+	public TitlePathBean() {
 
 	}
 

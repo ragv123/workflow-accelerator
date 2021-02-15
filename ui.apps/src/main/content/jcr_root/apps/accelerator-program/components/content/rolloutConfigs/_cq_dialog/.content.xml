@@ -45,15 +45,28 @@
                                                 name="./siteRootPage"
                                                 required="{Boolean}true"
                                                 rootPath="/content"/>
-                                            <countryResourceType
+                                            <languageRoot
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathbrowser"
+                                                fieldLabel="language Root Page"
+                                                fieldDescription="Root path under which all language copies are created."
+                                                name="./languageRoot"
+                                                required="{Boolean}true"
+                                                rootPath="/content"/>
+                                            <countryTemplatePath
                                                 jcr:primaryType="nt:unstructured"
                                                 sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
-                                                fieldDescription="The resource type using which country page is created."
-                                                fieldLabel="Country Page Resource"
-                                                forceSelection="{Boolean}true"
-                                                name="./countryResourceType"
-                                                required="{Boolean}true"
-                                                rootPath="/apps"/>        
+                                                fieldLabel="Country pages template path"
+                                                fieldDescription="Country template path using which country page will be created."
+                                                name="./countryTemplatePath"
+                                                required="{Boolean}true"/>
+                                            <languageTemplatePath
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                fieldLabel="Language pages template path"
+                                                fieldDescription="Language template path to verify the language page under language root."
+                                                name="./languageTemplatePath"
+                                                required="{Boolean}true"/>                 
                                         </items>
                                     </column>
                                 </items>

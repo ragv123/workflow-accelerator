@@ -36,8 +36,10 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.adobe.aem.accelerator.program.core.beans.CountryBean;
+import com.adobe.aem.accelerator.program.core.beans.TitlePathBean;
 import com.adobe.aem.accelerator.program.core.beans.RolloutPageInfo;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -45,6 +47,8 @@ import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.msm.api.LiveCopy;
 import com.day.cq.wcm.msm.api.LiveRelationship;
 import com.day.cq.wcm.msm.api.LiveRelationshipManager;
+import com.day.cq.wcm.msm.api.RolloutConfig;
+import com.day.cq.wcm.msm.api.RolloutConfigManager;
 import com.google.gson.Gson;
 
 @Model(adaptables = Resource.class, resourceType = {
@@ -68,38 +72,78 @@ public class RollOutConfigModel {
 	private String siteRootPage;
 
 	@ValueMapValue
-	private String countryResourceType;
+	private String languageTemplatePath;
+
+	@ValueMapValue
+	private String languageRoot;
+
+	@ValueMapValue
+	private String countryTemplatePath;
 
 	private Map<String, List<RolloutPageInfo>> pageinfoMap = new HashMap<String, List<RolloutPageInfo>>();
 
-	private Set<CountryBean> countriesSet = new HashSet<CountryBean>();
+	private Set<TitlePathBean> countriesSet = new HashSet<TitlePathBean>();
+
+	private Set<TitlePathBean> languageSet = new HashSet<TitlePathBean>();
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostConstruct
 	public void init() {
 		pageManager = resolver.adaptTo(PageManager.class);
 	}
 
-	public String getPages() {
-		return new Gson().toJson(getModifiedOrCreatedPages());
+	public Set<TitlePathBean> getCountriesSet() {
+		return getBeanSet(siteRootPage, countriesSet, countryTemplatePath);
 	}
 
-	public Set<CountryBean> getCountriesSet() {
-		if (StringUtils.isNotBlank(siteRootPage)) {
-			Page websiteRootPage = pageManager.getPage(siteRootPage);
-			if (null != websiteRootPage) {
-				Iterator<Page> pageItr = websiteRootPage.listChildren();
+	public Set<TitlePathBean> getLanguageSet() {
+		return getBeanSet(languageRoot, languageSet, languageTemplatePath);
+	}
+
+	public List<TitlePathBean> getRolloutConfigs() {
+		RolloutConfigManager rcm = resolver.adaptTo(RolloutConfigManager.class);
+		List<TitlePathBean> rolloutConfigs = new ArrayList<TitlePathBean>();
+		// Map<String, String> vm = new HashMap<String, String>();
+		try {
+			for (String key : rcm.getRolloutConfigs()) {
+				RolloutConfig rc = rcm.getRolloutConfig(key);
+				if (rc != null) {
+					// vm.put("value", rc.getPath());
+					// vm.put("text", rc.getTitle());
+					rolloutConfigs.add(new TitlePathBean(rc.getPath(), rc.getTitle()));
+				}
+			}
+		} catch (WCMException e) {
+			logger.warn("Unable to get rollout configurations");
+		}
+		return rolloutConfigs;
+	}
+
+	public String getCountryTemplatePath() {
+		return countryTemplatePath;
+	}
+
+	public String getSiteRootPath() {
+		return siteRootPage;
+	}
+
+	private Set<TitlePathBean> getBeanSet(String rootPagePath, Set<TitlePathBean> beanSet, String templateType) {
+		if (StringUtils.isNotBlank(rootPagePath)) {
+			Page rootPage = pageManager.getPage(rootPagePath);
+			if (null != rootPage) {
+				Iterator<Page> pageItr = rootPage.listChildren();
 				while (pageItr.hasNext()) {
-					Page countryPage = pageItr.next();
-					if (countryPage.getContentResource() != null && StringUtils.contains(countryResourceType,
-							countryPage.getContentResource().getResourceType())) {
-						CountryBean bean = new CountryBean(countryPage.getPath(),
-								countryPage.getTitle() != null ? countryPage.getTitle() : countryPage.getName());
-						countriesSet.add(bean);
+					Page page = pageItr.next();
+					if (StringUtils.contains(templateType, page.getTemplate().getPath())) {
+						TitlePathBean bean = new TitlePathBean(page.getPath(),
+								page.getTitle() != null ? page.getTitle() : page.getName());
+						beanSet.add(bean);
 					}
 				}
 			}
 		}
-		return countriesSet;
+		return beanSet;
 	}
 
 	public Map<String, List<RolloutPageInfo>> getModifiedOrCreatedPages() {
