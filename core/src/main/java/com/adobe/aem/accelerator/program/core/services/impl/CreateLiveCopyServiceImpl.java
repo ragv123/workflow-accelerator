@@ -113,11 +113,13 @@ public class CreateLiveCopyServiceImpl implements CreateLiveCopyService {
 		pageManager = resourceResolver.adaptTo(PageManager.class);
 		for (RolloutCountryBean bean : rolloutCountryBean) {
 			String siteName = bean.getName();
-			String blueprintPath = bean.getLanguage();
+			List<String> blueprintPaths = bean.getLanguages();
 			pageManager.create(siteRootPath, siteName, siteRootPath, bean.getTitle(), true);
-			createLiveCopy(resourceResolver, blueprintPath, siteRootPath + "/" + siteName, bean.getRolloutConfigs());
-			final Page blueprintPage = pageManager.getPage(blueprintPath);
-			rollout(rolloutManager, true, blueprintPage, null);
+			createLiveCopy(resourceResolver, blueprintPaths, siteRootPath + "/" + siteName, bean.getRolloutConfigs());
+			for (String blueprintPath : blueprintPaths) {
+				final Page blueprintPage = pageManager.getPage(blueprintPath);
+				rollout(rolloutManager, true, blueprintPage, null);
+			}
 		}
 
 	}
@@ -126,29 +128,33 @@ public class CreateLiveCopyServiceImpl implements CreateLiveCopyService {
 	 * Creates the live copy.
 	 *
 	 * @param resourceResolver the resource resolver
-	 * @param srcPath          the src path
+	 * @param blueprintPaths   the blueprint paths
 	 * @param destPath         the dest path
 	 * @param rolloutConfigs   the rollout configs
 	 */
-	public void createLiveCopy(ResourceResolver resourceResolver, String srcPath, String destPath,
+	public void createLiveCopy(ResourceResolver resourceResolver, List<String> blueprintPaths, String destPath,
 			String[] rolloutConfigs) {
 		try {
-			Page page = pageManager.getPage(srcPath);
-			String pageTitle = page.getTitle();
-			String pageLabel = page.getName();
-			Map<String, Object> params = new HashMap<>();
-			params.put(CHARSET, StandardCharsets.UTF_8);
-			params.put(CMD, CMD_LIVE_COPY);
-			params.put(WCMCommand.SRC_PATH_PARAM, srcPath);
-			params.put(WCMCommand.DEST_PATH_PARAM, destPath);
-			params.put(WCMCommand.PAGE_TITLE_PARAM, pageTitle);
-			params.put(WCMCommand.PAGE_LABEL_PARAM, pageLabel);
-			params.put(MSMNameConstants.PN_ROLLOUT_CONFIGS, rolloutConfigs);
-			HttpServletRequest req = requestResponseFactory.createRequest("POST", WCM_COMMAND_ENDPOINT, params);
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			HttpServletResponse response = requestResponseFactory.createResponse(out);
-			requestProcessor.processRequest(req, response, resourceResolver);
-		} catch (ServletException | IOException e) {
+			for (String blueprintPath : blueprintPaths) {
+				Page page = pageManager.getPage(blueprintPath);
+				String pageTitle = page.getTitle();
+				String pageLabel = page.getName();
+				Map<String, Object> params = new HashMap<>();
+				params.put(CHARSET, StandardCharsets.UTF_8);
+				params.put(CMD, CMD_LIVE_COPY);
+				params.put(WCMCommand.SRC_PATH_PARAM, blueprintPath);
+				params.put(WCMCommand.DEST_PATH_PARAM, destPath);
+				params.put(WCMCommand.PAGE_TITLE_PARAM, pageTitle);
+				params.put(WCMCommand.PAGE_LABEL_PARAM, pageLabel);
+				params.put(MSMNameConstants.PN_ROLLOUT_CONFIGS, rolloutConfigs);
+				HttpServletRequest req = requestResponseFactory.createRequest("POST", WCM_COMMAND_ENDPOINT, params);
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				HttpServletResponse response = requestResponseFactory.createResponse(out);
+				requestProcessor.processRequest(req, response, resourceResolver);
+			}
+		} catch (ServletException |
+
+				IOException e) {
 			LOGGER.error("An error occurred while creating live copy", e);
 		}
 	}

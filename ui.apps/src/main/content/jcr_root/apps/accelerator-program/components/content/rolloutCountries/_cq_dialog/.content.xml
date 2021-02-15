@@ -72,12 +72,31 @@
                                                                             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                                                             fieldLabel="Name of the country"
                                                                             name="./name"/>
-                                                                        <language
+                                                                        <languages
                                                                             jcr:primaryType="nt:unstructured"
-                                                                            sling:resourceType="granite/ui/components/coral/foundation/form/pathbrowser"
-                                                                            fieldLabel="language"
-                                                                            name="./language"
-                                                                            rootPath="/content/we-retail/language-masters"/>
+                                                                            sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                                                            composite="{Boolean}true"
+                                                                            fieldLabel="Languages">
+                                                                            <field
+                                                                                jcr:primaryType="nt:unstructured"
+                                                                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                                                name="./languages">
+                                                                                <items jcr:primaryType="nt:unstructured">
+                                                                                    <column
+                                                                                        jcr:primaryType="nt:unstructured"
+                                                                                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                                                        <items jcr:primaryType="nt:unstructured">
+                                                                                            <language
+                                                                                                jcr:primaryType="nt:unstructured"
+                                                                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathbrowser"
+                                                                                                fieldLabel="language"
+                                                                                                name="./language"
+                                                                                                rootPath="/content/we-retail/language-masters"/>
+                                                                                        </items>
+                                                                                    </column>
+                                                                                </items>
+                                                                            </field>
+                                                                        </languages>
                                                                         <rolloutconfigs
                                                                             jcr:primaryType="nt:unstructured"
                                                                             sling:resourceType="granite/ui/components/coral/foundation/form/select"
