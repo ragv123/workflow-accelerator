@@ -105,8 +105,15 @@ public class RolloutPageFinder extends SlingSafeMethodsServlet {
 	 * @return the list
 	 */
 	private List<String> mergeArrays(List<String> createdPageList, List<String> modifiedPageList) {
-		List<String> pagePaths = Stream.of(createdPageList, modifiedPageList).flatMap(x -> x.stream())
-				.collect(Collectors.toList());
+		List<String> pagePaths = new ArrayList<>();
+		if (Objects.nonNull(modifiedPageList) && Objects.nonNull(createdPageList)) {
+			pagePaths = Stream.of(createdPageList, modifiedPageList).flatMap(x -> x.stream())
+					.collect(Collectors.toList());
+		} else if (Objects.nonNull(modifiedPageList)) {
+			pagePaths = createdPageList;
+		} else if (Objects.nonNull(createdPageList)) {
+			pagePaths = modifiedPageList;
+		}
 		return pagePaths;
 	}
 

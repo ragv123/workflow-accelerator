@@ -102,12 +102,24 @@ public class CreateLiveCopyWorkflow implements WorkflowProcess {
 		if (rolloutCountriesResource.hasChildren()) {
 			Iterator<Resource> res = rolloutCountriesResource.listChildren();
 			while (res.hasNext()) {
-				Resource childRes = res.next();
-				ValueMap vmap = childRes.adaptTo(ValueMap.class);
 				RolloutCountryBean bean = new RolloutCountryBean();
+				List<String> languages = new ArrayList<>();
+				Resource childRes = res.next();
+				Iterator<Resource> languageRes = childRes.listChildren();
+				while (languageRes.hasNext()) {
+					Resource lang = languageRes.next();
+					Iterator<Resource> langRes = lang.listChildren();
+					while (langRes.hasNext()) {
+						Resource language = langRes.next();
+						ValueMap valueMap = language.adaptTo(ValueMap.class);
+						languages.add(valueMap.get("language", StringUtils.EMPTY));
+					}
+				}
+				ValueMap vmap = childRes.adaptTo(ValueMap.class);
+
 				bean.setTitle(vmap.get("title", StringUtils.EMPTY));
 				bean.setName(vmap.get("name", StringUtils.EMPTY));
-				bean.setLanguage(vmap.get("language", StringUtils.EMPTY));
+				bean.setLanguages(languages);
 				bean.setRolloutConfigs(vmap.get("cq:rolloutConfigs", String[].class));
 				rolloutCountryBean.add(bean);
 			}

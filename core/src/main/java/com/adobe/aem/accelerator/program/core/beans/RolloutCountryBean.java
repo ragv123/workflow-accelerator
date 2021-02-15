@@ -1,5 +1,7 @@
 package com.adobe.aem.accelerator.program.core.beans;
 
+import java.util.List;
+
 /**
  * The Class RolloutCountryBean.
  */
@@ -12,7 +14,7 @@ public class RolloutCountryBean {
 	private String name;
 
 	/** The language. */
-	private String language;
+	private List<String> languages;
 
 	/** The rollout configs. */
 	private String[] rolloutConfigs;
@@ -53,22 +55,12 @@ public class RolloutCountryBean {
 		this.name = name;
 	}
 
-	/**
-	 * Gets the language.
-	 *
-	 * @return the language
-	 */
-	public String getLanguage() {
-		return language;
+	public List<String> getLanguages() {
+		return languages;
 	}
 
-	/**
-	 * Sets the language.
-	 *
-	 * @param language the new language
-	 */
-	public void setLanguage(String language) {
-		this.language = language;
+	public void setLanguages(List<String> languages) {
+		this.languages = languages;
 	}
 
 	/**
