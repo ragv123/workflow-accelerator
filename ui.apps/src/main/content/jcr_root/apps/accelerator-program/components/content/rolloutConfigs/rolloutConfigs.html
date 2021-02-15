@@ -2,7 +2,7 @@
 	data-sly-use.clientLib="/libs/granite/sightly/templates/clientlib.html"
 	data-sly-call="${clientLib.all @ categories='multiselectplugin'}" />
 
-<div class="example">
+<div class="example"    style="padding-left: 20px;">
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -43,38 +43,44 @@
 	<sly
 		data-sly-use.model="com.adobe.aem.accelerator.program.core.models.RollOutConfigModel">
 	<sly data-sly-test.pageMap="${model.modifiedOrCreatedPages}" /> </sly>
-
 	<form action="/bin/accelerator/page/finder.json" method="get">
-		<div class="form-group">
-			<label for="createdPage">Choose created pages:</label>
-            <div>      
-                <select id="createdPage" class="form-control" name="createdPage" multiple="multiple">
-                    <option data-sly-repeat="${pageMap['createdPage']}" value="${item.path}">${item.title}</option>
-                </select>
-            </div>    
+		<div class="form-group row" style ="padding-left: 200px;">
+				<div class="col-md-6" style="color: #212529;">
+					<label for="createdPage">Choose Newly Created Pages</label>
+					<div>      
+						<select id="createdPage" class="form-control" name="createdPage" multiple="multiple">
+							<option data-sly-repeat="${pageMap['createdPage']}" value="${item.path}">${item.title}</option>
+						</select>
+					</div>    
+				</div>
+				<div class="col-md-6" style="color: #212529;">
+					<label for="modifiedPage">Choose Modified Pages </label>
+					<div>    
+						<select id="modifiedPage" class="form-control" name="modifiedPage" multiple="multiple">
+							<option data-sly-repeat="${pageMap['modifiedPage']}" value="${item.path}">${item.title}</option>
+						</select>
+					</div>    
+				</div>
 		</div>
-		<div class="form-group">
-			<label for="modifiedPage">Choose modified pages:</label>
-            <div>    
-                <select id="modifiedPage" class="form-control" name="modifiedPage" multiple="multiple">
-                    <option data-sly-repeat="${pageMap['modifiedPage']}" value="${item.path}">${item.title}</option>
-                </select>
-            </div>    
-		</div>
-		<div class="form-group">	
-			<label for="countries">Choose countries:</label>
-            <div>      
-                <select id="countries" class="form-control" name="countries" multiple="multiple">
-                    <option data-sly-repeat="${model.countriesSet}" value="${item.path}">${item.title}</option>
-                </select>
-            <div>      
-		</div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="true" name="isDeep" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">Roullout Children</label>
-        </div>
-        <button type="submit" class="btn btn-primary mb-2">Rollout</button>
+		<div class="form-group row" style ="padding-left: 200px;">
+				<div class="col-md-6"style="color: #212529;">	
+					<label for="countries">Choose Countries</label>
+					<div>      
+						<select id="countries" class="form-control" name="countries" multiple="multiple">
+							<option data-sly-repeat="${model.countriesSet}" value="${item.path}">${item.title}</option>
+						</select>
+					</div>      
+				</div>
 
+				<div class="col-md-6" style="color: #212529;">
+					<input class="form-check-input" type="checkbox" value="true" name="isDeep" id="defaultCheck1">
+					<label class="form-check-label" for="defaultCheck1">Roullout Children</label>
+				</div>
+        </div> 
+        <div class="form-group row" style ="padding-left: 550px;">
+        	<button type="submit" class="btn btn-primary mb-2" style="margin-top: 35px;">Rollout</button>
+		</div>
 	</form>
+    <img style="margin-left: 40px; margin-bottom: 20px;" src="/content/dam/we-retail/en/Capture.PNG"/>
 
 </div>
