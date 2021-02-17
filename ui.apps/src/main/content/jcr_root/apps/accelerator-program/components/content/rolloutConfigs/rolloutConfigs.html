@@ -70,7 +70,7 @@
 			</div>
 			<div class="form-group row" style ="padding-left: 200px;">
 				<div class="col-md-6" style="color: #212529;">
-					<label for="languages">Choose Newly Created Pages</label>
+					<label for="languages">Choose Languages</label>
 					<div>      
 						<select id="languages" class="form-control" name="languages" multiple="multiple">
 							<option data-sly-repeat="${model.languageSet}" value="${item.path}">${item.title}</option>
@@ -78,7 +78,7 @@
 					</div>    
 				</div>
 				<div class="col-md-6" style="color: #212529;">
-					<label for="rolloutConfigs">Choose Modified Pages </label>
+					<label for="rolloutConfigs">Choose Rollout Configurations </label>
 					<div>    
 						<select id="rolloutConfigs" class="form-control" name="rolloutConfigs" multiple="multiple">
 							<option data-sly-repeat="${model.rolloutConfigs}" value="${item.path}">${item.title}</option>
