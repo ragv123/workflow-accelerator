@@ -30,10 +30,14 @@ $(document).ready(function() {
         includeResetOption : true
     });
 
+ 
+
     var counter = 1;
     var addCountry = $('.country-rollout');
     var wrapper = $('.country-rollout-fields');
     var formFields = $('.new-country-form-fields').html();
+
+ 
 
     $(addCountry).click(function(){
         $(wrapper).append(formFields);
@@ -42,6 +46,8 @@ $(document).ready(function() {
         $('#languages').attr('id', 'languages-'+counter).attr('name', 'languages-'+counter);
         $('#rolloutConfigs').attr('id', 'rolloutConfigs-'+counter).attr('name', 'rolloutConfigs-'+counter);
         $('#isDeepCountry').attr('id', 'isDeepCountry-'+counter).attr('name', 'isDeepCountry-'+counter);
+
+ 
 
         $('#rolloutConfigs-'+counter).multiselect({
             enableHTML : false,
@@ -55,39 +61,45 @@ $(document).ready(function() {
             buttonWidth : '200px'
         });
 
+ 
+
         counter++;
     });
     
     $('.rollout').click(function(){
-    	var data = {};
-    	data.createdPage = $('#createdPage').val();
-    	data.modifiedPage = $('#modifiedPage').val();
-    	data.countries = $('#countries').val();
-    	data.isDeep = $('#defaultCheck1:checked').length > 0;
-    	data.templatePath = $('#countryTemplatePath').val();
-    	data.siteRootPath = $('#siteRootPath').val();
-    	
-    	var newCountryDetails = [];
+        var data = {};
+        data.createdPage = $('#createdPage').val();
+        data.modifiedPage = $('#modifiedPage').val();
+        data.countries = $('#countries').val();
+        data.isDeep = $('#defaultCheck1:checked').length > 0;
+        data.templatePath = $('#countryTemplatePath').val();
+        data.siteRootPath = $('#siteRootPath').val();
+        
+        var newCountryDetails = [];
         console.log(counter);
-    	for(var i = 1; i<counter; i++){
-    		var countryDetails = {};
-    		countryDetails.name = $('#countryName-'+i).val();
-	    	countryDetails.title = $('#countryTitle-'+i).val();
-	    	countryDetails.rolloutConfigs = $('#rolloutConfigs-'+i).val();
-	    	countryDetails.languages = $('#languages-'+i).val();
-	    	countryDetails.isDeep = $('#isDeepCountry-'+i+':checked').length > 0;
-	    	newCountryDetails.push(countryDetails)
-    	}
-    	data.newCountryDetails = newCountryDetails;
-    	console.log(data);
+        for(var i = 1; i<counter; i++){
+            var countryDetails = {};
+            countryDetails.name = $('#countryName-'+i).val();
+            countryDetails.title = $('#countryTitle-'+i).val();
+            countryDetails.rolloutConfigs = $('#rolloutConfigs-'+i).val();
+            countryDetails.languages = $('#languages-'+i).val();
+            countryDetails.isDeep = $('#isDeepCountry-'+i+':checked').length > 0;
+            newCountryDetails.push(countryDetails)
+        }
+        data.newCountryDetails = newCountryDetails;
+        console.log(data);
+
+
 
         $.ajax({
               type: 'POST',
               url: "/bin/accelerator/page/finder",
-              data: JSON.stringify(data),
+              data: 'data='+ JSON.stringify(data),
               dataType: "json",
-              success: function(resultData) { alert("Save Complete") }
+              success: function(resultData) { alert("Rollout Done!!") }
         });
+
+ 
 
     })
     

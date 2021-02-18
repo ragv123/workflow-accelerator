@@ -17,13 +17,17 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
-import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.adobe.aem.accelerator.program.core.beans.RolloutCountryBean;
 import com.adobe.aem.accelerator.program.core.services.CreateLiveCopyService;
 import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.msm.api.LiveRelationshipManager;
@@ -33,10 +37,10 @@ import com.google.gson.Gson;
 /**
  * The Class RolloutPageFinder.
  */
-@Component(service = Servlet.class, property = { "sling.servlet.methods=" + HttpConstants.METHOD_GET,
+@Component(service = Servlet.class, property = { "sling.servlet.methods=" + HttpConstants.METHOD_POST,
 		"sling.servlet.paths=" + "/bin/accelerator/page/finder", "sling.servlet.extensions=" + "json" })
 @ServiceDescription("Servlet to find page which are either modified or newly created for rollout.")
-public class RolloutPageFinder extends SlingSafeMethodsServlet {
+public class RolloutPageFinder extends SlingAllMethodsServlet {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5182704908085675193L;
@@ -64,7 +68,7 @@ public class RolloutPageFinder extends SlingSafeMethodsServlet {
 	 * @throws IOException      Signals that an I/O exception has occurred.
 	 */
 	@Override
-	protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
+	protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("application/json");
 		final ResourceResolver resolver = request.getResourceResolver();
@@ -73,28 +77,86 @@ public class RolloutPageFinder extends SlingSafeMethodsServlet {
 		List<String> countriesList = new ArrayList<>();
 		List<String> pagePaths = new ArrayList<>();
 		Map<String, List<String>> pageinfoMap = new HashMap<String, List<String>>();
-		String[] createdPage = request.getParameterValues("createdPage");
-		if (Objects.nonNull(createdPage)) {
-			createdPageList.addAll(Arrays.asList(createdPage));
-		}
-		String[] modifiedPage = request.getParameterValues("modifiedPage");
-		if (Objects.nonNull(modifiedPage)) {
-			modifiedPageList.addAll(Arrays.asList(modifiedPage));
-		}
-		String[] countries = request.getParameterValues("countries");
-		boolean isDeep = Boolean.parseBoolean(request.getParameter("isDeep"));
-		countriesList.addAll(Arrays.asList(countries));
-		pagePaths = mergeArrays(createdPageList, modifiedPageList);
 		try {
-			createLiveCopyService.createLiveCopy(resolver, pagePaths, countriesList, rolloutManager, liveRelManager,
-					isDeep);
-		} catch (WCMException exception) {
+			JSONObject data = new JSONObject(request.getParameter("data"));
+			JSONArray createdPagesArray = data.getJSONArray("createdPage");
+			String[] createdPage = getValues(createdPagesArray);
+			if (Objects.nonNull(createdPage)) {
+				createdPageList.addAll(Arrays.asList(createdPage));
+			}
+			JSONArray modifiedPagesArray = data.getJSONArray("modifiedPage");
+			String[] modifiedPage = null;
+			if (Objects.nonNull(modifiedPagesArray)) {
+				modifiedPage = getValues(modifiedPagesArray);
+				modifiedPageList.addAll(Arrays.asList(modifiedPage));
+			}
+			JSONArray countriesArray = data.getJSONArray("countries");
+			String[] countries = getValues(countriesArray);
+			boolean isDeep = data.getBoolean("isDeep");
+			if (Objects.nonNull(countries)) {
+				countriesList.addAll(Arrays.asList(countries));
+			}
+			pagePaths = mergeArrays(createdPageList, modifiedPageList);
+			if (Objects.nonNull(countries) && (Objects.nonNull(modifiedPage) || Objects.nonNull(createdPage))) {
+				createLiveCopyService.createLiveCopy(resolver, pagePaths, countriesList, rolloutManager, liveRelManager,
+						isDeep);
+			} else {
+				rolloutCountries(resolver, data);
+			}
+		} catch (WCMException | JSONException exception) {
 			LOGGER.error("An error has occured", exception);
 		}
 		pageinfoMap.put("createdPage", createdPageList);
 		pageinfoMap.put("modifiedPage", modifiedPageList);
 		pageinfoMap.put("countries", countriesList);
 		response.getWriter().write(new Gson().toJson(pageinfoMap));
+	}
+
+	/**
+	 * Rollout countries.
+	 *
+	 * @param resolver the resolver
+	 * @param data     the data
+	 * @throws JSONException the JSON exception
+	 * @throws WCMException  the WCM exception
+	 */
+	private void rolloutCountries(final ResourceResolver resolver, JSONObject data) throws JSONException, WCMException {
+		String templatePath = data.getString("templatePath");
+		String siteRootPath = data.getString("siteRootPath");
+		JSONArray jsonArray = data.getJSONArray("newCountryDetails");
+		int len = jsonArray.length();
+		List<RolloutCountryBean> rolloutCountryBean = new ArrayList<>();
+		for (int j = 0; j < len; j++) {
+			RolloutCountryBean bean = new RolloutCountryBean();
+			List<String> languages = new ArrayList<>();
+			JSONObject json = jsonArray.getJSONObject(j);
+			bean.setName(json.getString("name"));
+			bean.setName(json.getString("title"));
+			JSONArray configs = json.getJSONArray("rolloutConfigs");
+			JSONArray language = json.getJSONArray("languages");
+			String[] rolloutconfigs = getValues(configs);
+			bean.setRolloutConfigs(rolloutconfigs);
+			languages.addAll(Arrays.asList(getValues(language)));
+			bean.setLanguages(languages);
+			rolloutCountryBean.add(bean);
+		}
+		createLiveCopyService.rolloutCountries(resolver, rolloutCountryBean, rolloutManager, liveRelManager,
+				siteRootPath, templatePath);
+	}
+
+	/**
+	 * Gets the values.
+	 *
+	 * @param configs the configs
+	 * @return the values
+	 * @throws JSONException the JSON exception
+	 */
+	private String[] getValues(JSONArray configs) throws JSONException {
+		String[] stringArray = new String[configs.length()];
+		for (int i = 0; i < configs.length(); i++) {
+			stringArray[i] = configs.getString(i);
+		}
+		return stringArray;
 	}
 
 	/**
