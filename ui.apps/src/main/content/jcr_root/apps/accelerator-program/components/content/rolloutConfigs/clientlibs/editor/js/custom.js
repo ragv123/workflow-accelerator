@@ -30,8 +30,15 @@ $(document).ready(function() {
         includeResetOption : true
     });
 
+	$("#rollout-pages").click(function(){
+		$(".rollout-pages").show();
+		$("#rollout-pages").hide();
+	});
  
-
+	$(".country-rollout").click(function(){
+		$(".rollout-pages").hide();
+		$("#rollout-pages").hide();
+	});
     var counter = 1;
     var addCountry = $('.country-rollout');
     var wrapper = $('.country-rollout-fields');
@@ -96,7 +103,7 @@ $(document).ready(function() {
               url: "/bin/accelerator/page/finder",
               data: 'data='+ JSON.stringify(data),
               dataType: "json",
-              success: function(resultData) { alert("Rollout Done!!") }
+              success: function(resultData) { alert("Save Complete") }
         });
 
  

@@ -1,97 +1,96 @@
 <sly
-	data-sly-use.clientLib="/libs/granite/sightly/templates/clientlib.html"
-	data-sly-call="${clientLib.all @ categories='multiselectplugin'}" />
-
+   data-sly-use.clientLib="/libs/granite/sightly/templates/clientlib.html"
+   data-sly-call="${clientLib.all @ categories='multiselectplugin'}" />
 <div class="example"    style="padding-left: 20px;">
-	<sly
-		data-sly-use.model="com.adobe.aem.accelerator.program.core.models.RollOutConfigModel">
-	<sly data-sly-test.pageMap="${model.modifiedOrCreatedPages}" /> </sly>
-	<form id "rollout-form" action="/bin/accelerator/page/finder.json" method="get">
-		<input type="hidden" id="countryTemplatePath" name="countryTemplatePath" value="${model.countryTemplatePath}">
-		<input type="hidden" id="siteRootPath" name="siteRootPath" value="${model.siteRootPath}">
-		<div class="form-group row" style ="padding-left: 200px;">
-			<div class="col-md-6" style="color: #212529;">
-				<label for="createdPage">Choose Newly Created Pages</label>
-				<div>      
-					<select id="createdPage" class="form-control" name="createdPage" multiple="multiple">
-						<option data-sly-repeat="${pageMap['createdPage']}" value="${item.path}">${item.title}</option>
-					</select>
-				</div>    
-			</div>
-			<div class="col-md-6" style="color: #212529;">
-				<label for="modifiedPage">Choose Modified Pages </label>
-				<div>    
-					<select id="modifiedPage" class="form-control" name="modifiedPage" multiple="multiple">
-						<option data-sly-repeat="${pageMap['modifiedPage']}" value="${item.path}">${item.title}</option>
-					</select>
-				</div>    
-			</div>
-		</div>
-		<div class="form-group row" style ="padding-left: 200px;">
-			<div class="col-md-6"style="color: #212529;">	
-				<label for="countries">Choose Countries</label>
-				<div>      
-					<select id="countries" class="form-control" name="countries" multiple="multiple">
-						<option data-sly-repeat="${model.countriesSet}" value="${item.path}">${item.title}</option>
-					</select>
-				</div>      
-			</div>
-			<div class="col-md-6" style="color: #212529;">
-				<input class="form-check-input" type="checkbox" name="isDeep" id="defaultCheck1">
-				<label class="form-check-label" for="defaultCheck1">Rollout Children</label>
-			</div>
-        </div>
-		<div class="country-rollout-fields"></div>
-		<div class="form-group row" style ="padding-left: 550px;">
-        	<button type="button" class="btn btn-primary mb-2 country-rollout" style="margin-top: 35px; padding: 10px 30px;">Rollout New country</button>
-		</div>
-        <div class="form-group row" style ="padding-left: 550px;">
-        	<button type="button" class="btn btn-primary mb-2 rollout" style="margin-top: 35px; padding: 10px 75px;">Rollout</button>
-		</div>
-	</form>
-    <img style="margin-left: 40px; margin-bottom: 20px;" src="/content/dam/we-retail/en/Capture.PNG"/>
-
-                    <div class="new-country-form-fields" style="display:none;">
-		<fieldset>
-			<legend>New Country Details</legend>
-			<div class="form-group row" style ="padding-left: 200px;">
-				<div class="col-md-6" style="color: #212529;">
-					<label for="countryName">Enter New Country Name</label>
-					<div>      
-						<input id="countryName" class="form-control" type="text" name="countryName" placeholder="Enter country Name">
-					</div>    
-				</div>
-				<div class="col-md-6" style="color: #212529;">
-					<label for="countryTitle">Enter New Country Title</label>
-					<div>    
-						<input id="countryTitle" class="form-control" type="text" name="countryTitle" placeholder="Enter country title">
-					</div>    
-				</div>
-			</div>
-			<div class="form-group row" style ="padding-left: 200px;">
-				<div class="col-md-6" style="color: #212529;">
-					<label for="languages">Choose Languages</label>
-					<div>      
-						<select id="languages" class="form-control" name="languages" multiple="multiple">
-							<option data-sly-repeat="${model.languageSet}" value="${item.path}">${item.title}</option>
-						</select>
-					</div>    
-				</div>
-				<div class="col-md-6" style="color: #212529;">
-					<label for="rolloutConfigs">Choose Rollout Configurations </label>
-					<div>    
-						<select id="rolloutConfigs" class="form-control" name="rolloutConfigs" multiple="multiple">
-							<option data-sly-repeat="${model.rolloutConfigs}" value="${item.path}">${item.title}</option>
-						</select>
-					</div>    
-				</div>
-			</div>
-			<div class="form-group row" style ="padding-left: 200px;">
-				<div class="col-md-6" style="color: #212529;">
-					<input class="form-check-input" type="checkbox" name="isDeepCountry" id="isDeepCountry">
-					<label class="form-check-label" for="isDeepCountry">Rollout Children</label>
-				</div>
-			</div>
-		</fieldset>
-	</div>
+   <sly
+      data-sly-use.model="com.adobe.aem.accelerator.program.core.models.RollOutConfigModel">
+      <sly data-sly-test.pageMap="${model.modifiedOrCreatedPages}" />
+   </sly>
+   <form id "rollout-form" action="/bin/accelerator/page/finder.json" method="get">
+      <input type="hidden" id="countryTemplatePath" name="countryTemplatePath" value="${model.countryTemplatePath}">
+      <input type="hidden" id="siteRootPath" name="siteRootPath" value="${model.siteRootPath}">
+      <div class="rollout-pages" style="display:none;">
+         <div class="form-group row" style ="padding-left: 200px;">
+            <div class="col-md-6" style="color: #212529;">
+               <label for="createdPage">Choose Newly Created Pages</label>
+               <div>
+                  <select id="createdPage" class="form-control" name="createdPage" multiple="multiple">
+                     <option data-sly-repeat="${pageMap['createdPage']}" value="${item.path}">${item.title}</option>
+                  </select>
+               </div>
+            </div>
+            <div class="col-md-6" style="color: #212529;">
+               <label for="modifiedPage">Choose Modified Pages </label>
+               <div>
+                  <select id="modifiedPage" class="form-control" name="modifiedPage" multiple="multiple">
+                     <option data-sly-repeat="${pageMap['modifiedPage']}" value="${item.path}">${item.title}</option>
+                  </select>
+               </div>
+            </div>
+         </div>
+         <div class="form-group row" style ="padding-left: 200px;">
+            <div class="col-md-6"style="color: #212529;">
+               <label for="countries">Choose Countries</label>
+               <div>
+                  <select id="countries" class="form-control" name="countries" multiple="multiple">
+                     <option data-sly-repeat="${model.countriesSet}" value="${item.path}">${item.title}</option>
+                  </select>
+               </div>
+            </div>
+            <div class="col-md-6" style="color: #212529;">
+               <input class="form-check-input" type="checkbox" name="isDeep" id="defaultCheck1">
+               <label class="form-check-label" for="defaultCheck1">Rollout Children</label>
+            </div>
+         </div>
+      </div>
+      <div class="form-group row" style ="padding-left: 550px;">
+         <button type="button" id = "rollout-pages"class="btn btn-primary mb-2" style="margin-top: 35px; padding: 10px 50px;">Rollout Pages</button>
+      </div>
+      <div class="country-rollout-fields"></div>
+      <div class="form-group row" style ="padding-left: 550px;">
+         <button type="button" class="btn btn-primary mb-2 country-rollout" style="margin-top: 35px; padding: 10px 30px;">Rollout New country</button>
+      </div>
+      <div class="form-group row" style ="padding-left: 550px;">
+         <button type="button" class="btn btn-primary mb-2 rollout" style="margin-top: 35px; padding: 10px 75px;">Rollout</button>
+      </div>
+   </form>
+   <div class="new-country-form-fields" style="display:none;">
+      <fieldset>
+         <legend>New Country Details</legend>
+         <div class="form-group row" style ="padding-left: 200px;">
+            <div class="col-md-6" style="color: #212529;">
+               <label for="countryName">Enter New Country Name</label>
+               <div>      
+                  <input id="countryName" class="form-control" type="text" name="countryName" placeholder="Enter country Name">
+               </div>
+            </div>
+            <div class="col-md-6" style="color: #212529;">
+               <label for="countryTitle">Enter New Country Title</label>
+               <div>    
+                  <input id="countryTitle" class="form-control" type="text" name="countryTitle" placeholder="Enter country title">
+               </div>
+            </div>
+         </div>
+         <div class="form-group row" style ="padding-left: 200px;">
+            <div class="col-md-6" style="color: #212529;">
+               <label for="languages">Choose Languages</label>
+               <div>
+                  <select id="languages" class="form-control" name="languages" multiple="multiple">
+                     <option data-sly-repeat="${model.languageSet}" value="${item.path}">${item.title}</option>
+                  </select>
+               </div>
+            </div>
+            <div class="col-md-6" style="color: #212529;">
+               <label for="rolloutConfigs">Choose Rollout Configurations </label>
+               <div>
+                  <select id="rolloutConfigs" class="form-control" name="rolloutConfigs" multiple="multiple">
+                     <option data-sly-repeat="${model.rolloutConfigs}" value="${item.path}">${item.title}</option>
+                  </select>
+               </div>
+            </div>
+         </div>
+         
+   </div>
+   </fieldset>
+</div>
 </div>
