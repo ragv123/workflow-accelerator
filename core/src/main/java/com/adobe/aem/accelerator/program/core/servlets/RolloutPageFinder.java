@@ -77,24 +77,33 @@ public class RolloutPageFinder extends SlingAllMethodsServlet {
 		List<String> countriesList = new ArrayList<>();
 		List<String> pagePaths = new ArrayList<>();
 		Map<String, List<String>> pageinfoMap = new HashMap<String, List<String>>();
+		String[] createdPage = null;
 		try {
 			JSONObject data = new JSONObject(request.getParameter("data"));
-			JSONArray createdPagesArray = data.getJSONArray("createdPage");
-			String[] createdPage = getValues(createdPagesArray);
-			if (Objects.nonNull(createdPage)) {
-				createdPageList.addAll(Arrays.asList(createdPage));
+			if (!data.isNull("createdPage")) {
+				JSONArray createdPagesArray = data.getJSONArray("createdPage");
+				createdPage = getValues(createdPagesArray);
+				if (Objects.nonNull(createdPage)) {
+					createdPageList.addAll(Arrays.asList(createdPage));
+				}
 			}
-			JSONArray modifiedPagesArray = data.getJSONArray("modifiedPage");
+
 			String[] modifiedPage = null;
-			if (Objects.nonNull(modifiedPagesArray)) {
-				modifiedPage = getValues(modifiedPagesArray);
-				modifiedPageList.addAll(Arrays.asList(modifiedPage));
+			if (!data.isNull("modifiedPage")) {
+				JSONArray modifiedPagesArray = data.getJSONArray("modifiedPage");
+				if (Objects.nonNull(modifiedPagesArray)) {
+					modifiedPage = getValues(modifiedPagesArray);
+					modifiedPageList.addAll(Arrays.asList(modifiedPage));
+				}
 			}
-			JSONArray countriesArray = data.getJSONArray("countries");
-			String[] countries = getValues(countriesArray);
 			boolean isDeep = data.getBoolean("isDeep");
-			if (Objects.nonNull(countries)) {
-				countriesList.addAll(Arrays.asList(countries));
+			String[] countries = null;
+			if (!data.isNull("countries")) {
+				JSONArray countriesArray = data.getJSONArray("countries");
+				countries = getValues(countriesArray);
+				if (Objects.nonNull(countries)) {
+					countriesList.addAll(Arrays.asList(countries));
+				}
 			}
 			pagePaths = mergeArrays(createdPageList, modifiedPageList);
 			if (Objects.nonNull(countries) && (Objects.nonNull(modifiedPage) || Objects.nonNull(createdPage))) {
@@ -131,7 +140,7 @@ public class RolloutPageFinder extends SlingAllMethodsServlet {
 			List<String> languages = new ArrayList<>();
 			JSONObject json = jsonArray.getJSONObject(j);
 			bean.setName(json.getString("name"));
-			bean.setName(json.getString("title"));
+			bean.setTitle(json.getString("title"));
 			JSONArray configs = json.getJSONArray("rolloutConfigs");
 			JSONArray language = json.getJSONArray("languages");
 			String[] rolloutconfigs = getValues(configs);
@@ -152,9 +161,12 @@ public class RolloutPageFinder extends SlingAllMethodsServlet {
 	 * @throws JSONException the JSON exception
 	 */
 	private String[] getValues(JSONArray configs) throws JSONException {
-		String[] stringArray = new String[configs.length()];
-		for (int i = 0; i < configs.length(); i++) {
-			stringArray[i] = configs.getString(i);
+		String[] stringArray = null;
+		if (Objects.nonNull(configs)) {
+			stringArray = new String[configs.length()];
+			for (int i = 0; i < configs.length(); i++) {
+				stringArray[i] = configs.getString(i);
+			}
 		}
 		return stringArray;
 	}

@@ -135,7 +135,8 @@ public class RollOutConfigModel {
 				Iterator<Page> pageItr = rootPage.listChildren();
 				while (pageItr.hasNext()) {
 					Page page = pageItr.next();
-					if (StringUtils.contains(templateType, page.getTemplate().getPath())) {
+					if (StringUtils.contains(templateType, page.getTemplate().getPath())
+							&& !(page.getName().equalsIgnoreCase("language-masters"))) {
 						TitlePathBean bean = new TitlePathBean(page.getPath(),
 								page.getTitle() != null ? page.getTitle() : page.getName());
 						beanSet.add(bean);

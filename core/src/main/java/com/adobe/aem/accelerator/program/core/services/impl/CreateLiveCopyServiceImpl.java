@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.vault.util.Text;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.engine.SlingRequestProcessor;
 import org.osgi.service.component.annotations.Component;
@@ -40,7 +42,7 @@ import com.day.cq.wcm.msm.api.RolloutManager.RolloutParams;
  * The Class CreateLiveCopyServiceImpl.
  */
 @Component(immediate = true, service = CreateLiveCopyService.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
-@Designate(ocd = CreateLiveCopyServiceConfig.class)
+
 public class CreateLiveCopyServiceImpl implements CreateLiveCopyService {
 
 	/** The rollout manager. */
@@ -114,7 +116,10 @@ public class CreateLiveCopyServiceImpl implements CreateLiveCopyService {
 		for (RolloutCountryBean bean : rolloutCountryBean) {
 			String siteName = bean.getName();
 			List<String> blueprintPaths = bean.getLanguages();
-			pageManager.create(siteRootPath, siteName, siteRootPath, bean.getTitle(), true);
+			Resource countryRes = resourceResolver.getResource(siteRootPath + "/" + bean.getName());
+			if (Objects.isNull(countryRes)) {
+				pageManager.create(siteRootPath, siteName, siteRootPath, bean.getTitle(), true);
+			}
 			createLiveCopy(resourceResolver, blueprintPaths, siteRootPath + "/" + siteName, bean.getRolloutConfigs());
 			for (String blueprintPath : blueprintPaths) {
 				final Page blueprintPage = pageManager.getPage(blueprintPath);
